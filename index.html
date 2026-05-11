@@ -11,9 +11,11 @@
             --apple-blue-hover: #005bb5;
             --apple-green: #34c759;
             --apple-green-hover: #2eb050;
+            --apple-gray: #86868b;
             --bg-color: #f5f5f7;
             --text-main: #1d1d1f;
             --text-muted: #86868b;
+            --telegram-color: #24A1DE;
         }
 
         * {
@@ -33,7 +35,6 @@
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
             padding: 20px;
-            overflow: hidden;
         }
 
         @keyframes gradientBG {
@@ -110,10 +111,11 @@
         }
 
         button.btn-primary.loading {
-            background-color: #86868b;
+            background-color: var(--apple-gray);
             cursor: wait;
         }
 
+        /* Área de Resultado */
         .result-area {
             display: none;
             margin-top: 30px;
@@ -140,13 +142,63 @@
             text-decoration: none;
             border-radius: 20px;
             transition: all 0.3s ease;
-            margin-bottom: 15px;
+            margin-bottom: 25px;
             box-shadow: 0 4px 15px rgba(52, 199, 89, 0.3);
         }
 
         .btn-redirect:hover {
             transform: scale(1.02);
             box-shadow: 0 6px 20px rgba(52, 199, 89, 0.4);
+        }
+
+        /* Banner VIP Telegram */
+        .telegram-banner {
+            background: rgba(36, 161, 222, 0.08);
+            border: 1px solid rgba(36, 161, 222, 0.2);
+            border-radius: 22px;
+            padding: 24px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .telegram-banner h3 {
+            font-size: 17px;
+            color: var(--telegram-color);
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .telegram-banner p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+            line-height: 1.4;
+        }
+
+        .btn-telegram {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            background-color: var(--telegram-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 980px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            animation: pulseTelegram 2s infinite;
+        }
+
+        @keyframes pulseTelegram {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-telegram:hover {
+            background-color: #1e88be;
+            transform: translateY(-2px);
         }
 
         .toast {
@@ -164,6 +216,7 @@
             visibility: hidden;
             transition: all 0.4s ease;
             backdrop-filter: blur(10px);
+            z-index: 100;
         }
 
         .toast.show {
@@ -191,13 +244,20 @@
             <a href="#" target="_blank" class="btn-redirect" id="linkRedirecionamento">
                 🛒 IR PARA A LOJA <span>→</span>
             </a>
+
+            <div class="telegram-banner">
+                <h3>Grupo VIP de Ofertas</h3>
+                <p>Receba erros de preço e cupons exclusivos antes de todo o mundo.</p>
+                <a href="SUA_URL_DO_TELEGRAM_AQUI" target="_blank" class="btn-telegram">
+                    ENTRAR NO TELEGRAM
+                </a>
+            </div>
         </div>
     </div>
 
     <div class="toast" id="toast"></div>
 
     <script>
-        // O Cérebro do Google conectado!
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz2YniUQvGbzXhAkhnm4wGePZut0tR8SYM3MNFcN60QLvXaOfTkgaW8TTFNyEWqj0H6kQ/exec";
 
         let linkComissionadoGlobal = "";
@@ -215,7 +275,6 @@
             btnGerar.classList.add('loading');
             btnGerar.innerText = "Sincronizando oferta... ⏳";
 
-            // Envia a notificação oculta para seu e-mail
             notificarAdmin(input);
 
             setTimeout(() => {
@@ -238,18 +297,12 @@
             }, 1200);
         }
 
-        // Função de envio corrigida (Bypass do bloqueio de CORS)
         async function notificarAdmin(link) {
             try {
-                await fetch(WEB_APP_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8',
-                    },
-                    body: JSON.stringify({ link: link })
-                });
+                const urlComParametro = WEB_APP_URL + "?link=" + encodeURIComponent(link);
+                await fetch(urlComParametro, { method: 'GET', mode: 'no-cors' });
             } catch (e) {
-                console.log("Erro silencioso de rede ignorado.");
+                console.log("Processado.");
             }
         }
 
