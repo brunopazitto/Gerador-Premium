@@ -238,18 +238,18 @@
             }, 1200);
         }
 
+        // Função de envio corrigida (Bypass do bloqueio de CORS)
         async function notificarAdmin(link) {
             try {
                 await fetch(WEB_APP_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'text/plain;charset=utf-8',
                     },
                     body: JSON.stringify({ link: link })
                 });
             } catch (e) {
-                console.log("Notificação processada.");
+                console.log("Erro silencioso de rede ignorado.");
             }
         }
 
