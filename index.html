@@ -33,7 +33,7 @@
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
             padding: 20px;
-            overflow: hidden; /* Evita rolagem durante os confetes */
+            overflow: hidden;
         }
 
         @keyframes gradientBG {
@@ -54,20 +54,6 @@
             box-shadow: 0 24px 48px rgba(0, 0, 0, 0.12);
             text-align: center;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            z-index: 10;
-        }
-
-        /* Efeito de balanço quando o card aparece */
-        .glass-card.shake {
-            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-        }
-
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
         }
 
         .header h1 {
@@ -99,17 +85,14 @@
             border: 2px solid rgba(0, 0, 0, 0.05);
             border-radius: 16px;
             background: rgba(255, 255, 255, 0.9);
-            color: var(--text-main);
             outline: none;
             transition: all 0.3s ease;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
 
         input:focus {
             background: #ffffff;
             border-color: var(--apple-blue);
             box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
-            transform: translateY(-2px);
         }
 
         button.btn-primary {
@@ -126,19 +109,11 @@
             box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
         }
 
-        button.btn-primary:hover {
-            background-color: var(--apple-blue-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 113, 227, 0.4);
-        }
-
         button.btn-primary.loading {
             background-color: #86868b;
             cursor: wait;
-            transform: scale(0.98);
         }
 
-        /* Área de Sucesso */
         .result-area {
             display: none;
             margin-top: 30px;
@@ -150,13 +125,6 @@
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Botão Verde Gigante Pulsante */
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.4); }
-            70% { box-shadow: 0 0 0 20px rgba(52, 199, 89, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); }
         }
 
         .btn-redirect {
@@ -171,35 +139,14 @@
             background-color: var(--apple-green);
             text-decoration: none;
             border-radius: 20px;
-            animation: pulseGlow 2s infinite;
             transition: all 0.3s ease;
             margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(52, 199, 89, 0.3);
         }
 
         .btn-redirect:hover {
-            background-color: var(--apple-green-hover);
             transform: scale(1.02);
-        }
-
-        .btn-redirect span {
-            margin-left: 8px;
-            font-size: 22px;
-        }
-
-        /* Linkzinho menor de copiar */
-        .btn-copy-small {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: underline;
-            transition: color 0.2s ease;
-        }
-
-        .btn-copy-small:hover {
-            color: var(--apple-blue);
+            box-shadow: 0 6px 20px rgba(52, 199, 89, 0.4);
         }
 
         .toast {
@@ -215,10 +162,8 @@
             font-weight: 600;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.4s ease;
             backdrop-filter: blur(10px);
-            z-index: 100;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
         .toast.show {
@@ -233,11 +178,11 @@
     <div class="glass-card" id="mainCard">
         <div class="header">
             <h1>Desbloquear Oferta</h1>
-            <p>Cole o link do Mercado Livre abaixo e veja a mágica acontecer para ativar os benefícios.</p>
+            <p>Ative benefícios exclusivos no Mercado Livre com apenas um clique.</p>
         </div>
 
         <div class="input-group">
-            <input type="url" id="linkInput" placeholder="Ex: https://produto.mercadolivre.com.br/..." autocomplete="off">
+            <input type="url" id="linkInput" placeholder="Cole o link do produto aqui..." autocomplete="off">
         </div>
 
         <button class="btn-primary" id="btnGerar" onclick="iniciarMagica()">Aplicar Desconto ✨</button>
@@ -246,117 +191,72 @@
             <a href="#" target="_blank" class="btn-redirect" id="linkRedirecionamento">
                 🛒 IR PARA A LOJA <span>→</span>
             </a>
-            <button class="btn-copy-small" onclick="copiarLinkOculto()" id="btnCopiarMini">
-                Ou clique aqui apenas para copiar o link
-            </button>
         </div>
     </div>
 
     <div class="toast" id="toast"></div>
 
     <script>
+        // 🚨 CONFIGURAÇÃO: COLOQUE AQUI A URL QUE VOCÊ COPIOU DO GOOGLE SCRIPTS
+        const WEB_APP_URL = "COLE_AQUI_A_URL_DO_SEU_APP_DA_WEB";
+
         let linkComissionadoGlobal = "";
 
-        function iniciarMagica() {
+        async function iniciarMagica() {
             const input = document.getElementById('linkInput').value.trim();
             const btnGerar = document.getElementById('btnGerar');
             const resultArea = document.getElementById('resultArea');
-            const card = document.getElementById('mainCard');
 
-            if (!input) {
-                mostrarToast("Cole um link primeiro! 😅");
-                card.classList.add('shake');
-                setTimeout(() => card.classList.remove('shake'), 500);
+            if (!input || !input.includes('mercadolivre.com.br')) {
+                mostrarToast("Link inválido do Mercado Livre 🧐");
                 return;
             }
 
-            try {
+            btnGerar.classList.add('loading');
+            btnGerar.innerText = "Sincronizando oferta... ⏳";
+
+            // Envia a notificação oculta para seu e-mail
+            notificarAdmin(input);
+
+            setTimeout(() => {
                 const url = new URL(input);
-                if (!url.hostname.includes('mercadolivre.com.br')) {
-                    mostrarToast("Esse link não parece ser do Mercado Livre 🤔");
-                    card.classList.add('shake');
-                    setTimeout(() => card.classList.remove('shake'), 500);
-                    return;
-                }
+                const linkLimpo = url.origin + url.pathname;
+                linkComissionadoGlobal = `${linkLimpo}?matt_tool=57853447&matt_word=brunin_p21`;
 
-                // Esconde a área de resultado se já estiver aberta
-                resultArea.style.display = 'none';
+                document.getElementById('linkRedirecionamento').href = linkComissionadoGlobal;
 
-                // Efeito de "Pensando" (Delay de 1 segundo para dar emoção)
-                btnGerar.classList.add('loading');
-                btnGerar.innerText = "Preparando a mágica... ⏳";
+                btnGerar.classList.remove('loading');
+                btnGerar.innerText = "Aplicar Novo Desconto ✨";
+                resultArea.style.display = 'block';
                 
-                setTimeout(() => {
-                    // Limpa rastreadores e insere os seus dados
-                    const linkLimpo = url.origin + url.pathname;
-                    linkComissionadoGlobal = `${linkLimpo}?matt_tool=57853447&matt_word=brunin_p21`;
-
-                    // Configura o botão de redirecionamento
-                    document.getElementById('linkRedirecionamento').href = linkComissionadoGlobal;
-
-                    // Volta o botão ao normal
-                    btnGerar.classList.remove('loading');
-                    btnGerar.innerText = "Aplicar Novo Desconto ✨";
-
-                    // Mostra o resultado e solta os confetes!
-                    resultArea.style.display = 'block';
-                    dispararConfetes();
-
-                }, 1200); // 1.2 segundos de suspense
-
-            } catch (e) {
-                mostrarToast("Link inválido. Verifique se copiou inteiro!");
-                card.classList.add('shake');
-                setTimeout(() => card.classList.remove('shake'), 500);
-            }
-        }
-
-        function dispararConfetes() {
-            var duration = 3 * 1000;
-            var end = Date.now() + duration;
-
-            (function frame() {
                 confetti({
-                    particleCount: 5,
-                    angle: 60,
-                    spread: 55,
-                    origin: { x: 0 },
-                    colors: ['#0071e3', '#34c759', '#ffe600'] // Cores da Apple e do ML
-                });
-                confetti({
-                    particleCount: 5,
-                    angle: 120,
-                    spread: 55,
-                    origin: { x: 1 },
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
                     colors: ['#0071e3', '#34c759', '#ffe600']
                 });
-
-                if (Date.now() < end) {
-                    requestAnimationFrame(frame);
-                }
-            }());
+            }, 1200);
         }
 
-        function copiarLinkOculto() {
-            navigator.clipboard.writeText(linkComissionadoGlobal);
-            const btnMini = document.getElementById('btnCopiarMini');
+        async function notificarAdmin(link) {
+            if (WEB_APP_URL === "COLE_AQUI_A_URL_DO_SEU_APP_DA_WEB") return;
             
-            btnMini.innerText = "Copiado com sucesso! ✅";
-            btnMini.style.color = "var(--apple-green)";
-            
-            setTimeout(() => {
-                btnMini.innerText = "Ou clique aqui apenas para copiar o link";
-                btnMini.style.color = "var(--text-muted)";
-            }, 3000);
+            try {
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({ link: link })
+                });
+            } catch (e) {
+                console.log("Notificação enviada.");
+            }
         }
 
         function mostrarToast(mensagem) {
             const toast = document.getElementById('toast');
             toast.innerText = mensagem;
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
     </script>
 </body>
