@@ -197,8 +197,8 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // 🚨 CONFIGURAÇÃO: COLOQUE AQUI A URL QUE VOCÊ COPIOU DO GOOGLE SCRIPTS
-        const WEB_APP_URL = "COLE_AQUI_A_URL_DO_SEU_APP_DA_WEB";
+        // O Cérebro do Google conectado!
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz2YniUQvGbzXhAkhnm4wGePZut0tR8SYM3MNFcN60QLvXaOfTkgaW8TTFNyEWqj0H6kQ/exec";
 
         let linkComissionadoGlobal = "";
 
@@ -239,16 +239,17 @@
         }
 
         async function notificarAdmin(link) {
-            if (WEB_APP_URL === "COLE_AQUI_A_URL_DO_SEU_APP_DA_WEB") return;
-            
             try {
                 await fetch(WEB_APP_URL, {
                     method: 'POST',
                     mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                     body: JSON.stringify({ link: link })
                 });
             } catch (e) {
-                console.log("Notificação enviada.");
+                console.log("Notificação processada.");
             }
         }
 
